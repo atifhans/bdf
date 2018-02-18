@@ -1,0 +1,13 @@
+#!/usr/bin/bash
+
+rm -rf work
+vlib work
+vlog +acc ../rtl/defines_pkg.sv
+vlog +acc ../rtl/buff_controller.sv
+vlog +acc ../rtl/controller.sv
+vlog +acc ../rtl/pe_1in1out.sv
+vlog +acc ../rtl/pe_1in2out.sv
+vlog +acc ../rtl/pe_2in1out.sv
+vlog +acc ../rtl/pe_2in2out.sv
+vlog +acc ../rtl/bdf.sv
+vsim -c {ARG0} -do "run -all; quit"
