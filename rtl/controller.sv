@@ -19,8 +19,8 @@ module controller #(parameter CTRL_WIDTH = 24,  //No. of buffers*2
     input  logic                  load_ctrl,
     input  logic                  start_ctrl,
     input  logic                  stop_ctrl,
-    output logic                  buff_wr_toggle[CTRL_WIDTH],
-    output logic                  buff_rd_toggle[CTRL_WIDTH]
+    output logic                  buff_wr_toggle[CTRL_WIDTH/2],
+    output logic                  buff_rd_toggle[CTRL_WIDTH/2]
 );
 
     logic [LSIZE-1:0]      wr_addr;
