@@ -11,7 +11,7 @@ import defines_pkg::*;
 
 module controller #(parameter CTRL_WIDTH = 24,  //No. of buffers*2
                     parameter CTRL_DEPTH = 48,  //Iteration period
-                    parameter LSIZE      = $clog2(CTRL_WIDTH))
+                    parameter LSIZE      = $clog2(CTRL_DEPTH))
 (
     input  logic                  clk,
     input  logic                  rst,
@@ -35,21 +35,23 @@ module controller #(parameter CTRL_WIDTH = 24,  //No. of buffers*2
 
     always_comb begin
         for(int i = 0; i < CTRL_WIDTH; i+=2) begin
-            buff_wr_toggle[i] = ctrl_word[i];
-            buff_rd_toggle[i] = ctrl_word[i+1];
+            buff_wr_toggle[i/2] = ctrl_word[CTRL_WIDTH - i - 1];
+            buff_rd_toggle[i/2] = ctrl_word[CTRL_WIDTH - i];
         end
     end
 
     memory #(
         .WIDTH    ( CTRL_WIDTH  ),
-        .SIZE     ( CTRL_SIZE   ))
+        .SIZE     ( CTRL_DEPTH  ))
     u_ctrl_mem (
         .clk      ( clk       ),
-        .wr_addr  ( wr_cntr   ),
+        .rst      ( rst       ),
+        .wr_addr  ( wr_addr   ),
         .rd_addr  ( rd_addr   ),
         .data_in  ( ctrl_in   ),
         .data_out ( ctrl_word ),
-        .wr_en    ( wr_en    ));
+        .wr_en    ( wr_en     )
+    );
 
     always_ff @(posedge clk) begin
         if(rst) begin
@@ -71,7 +73,7 @@ module controller #(parameter CTRL_WIDTH = 24,  //No. of buffers*2
         end
         else begin
             if (wr_en) begin
-                wr_addr <= (wr_addr == SIZE-1) ? 'd0 : wr_addr + 1'b1;
+                wr_addr <= (wr_addr == CTRL_DEPTH-1) ? 'd0 : wr_addr + 1'b1;
             end
         end
     end
@@ -82,7 +84,7 @@ module controller #(parameter CTRL_WIDTH = 24,  //No. of buffers*2
         end
         else begin
             if (rd_en) begin
-                rd_addr <= (rd_addr == SIZE-1) ? 'd0 : rd_addr + 1'b1;
+                rd_addr <= (rd_addr == CTRL_DEPTH-1) ? 'd0 : rd_addr + 1'b1;
             end
         end
     end

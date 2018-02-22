@@ -36,8 +36,9 @@ module buff_controller #(parameter WIDTH = 16,
         .SIZE     ( SIZE     ))
     u_mem (
         .clk      ( clk      ),
+        .rst      ( rst      ),
         .wr_addr  ( wr_cntr  ),
-        .rd_addr  ( rd_addr  ),
+        .rd_addr  ( rd_cntr  ),
         .data_in  ( data_in  ),
         .data_out ( data_out ),
         .wr_en    ( wr_en    ));

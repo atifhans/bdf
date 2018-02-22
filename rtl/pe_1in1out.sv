@@ -9,18 +9,18 @@
 
 import defines_pkg::*;
 
-module pe_1in1out #(parameter WIDTH   = 16
+module pe_1in1out #(parameter WIDTH   = 16,
                     parameter LATENCY = 15)
 (
     input  logic                clk,
     input  logic                rst,
     input  logic [WIDTH-1:0]    data_in_1,
     output logic [WIDTH-1:0]    data_out_1
-)
+);
 
     logic [WIDTH-1:0] data_int[LATENCY];
 
-    assign data_out_1 = data_int[LATENCY];
+    assign data_out_1 = data_int[LATENCY-1];
 
     always_ff @(posedge clk) begin
         if(rst) begin

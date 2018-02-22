@@ -9,7 +9,7 @@
 
 import defines_pkg::*;
 
-module pe_2in2out #(parameter WIDTH   = 16
+module pe_2in2out #(parameter WIDTH   = 16,
                     parameter LATENCY = 15)
 (
     input  logic                clk,
@@ -18,12 +18,12 @@ module pe_2in2out #(parameter WIDTH   = 16
     input  logic [WIDTH-1:0]    data_in_2,
     output logic [WIDTH-1:0]    data_out_1,
     output logic [WIDTH-1:0]    data_out_2
-)
+);
 
     logic [WIDTH-1:0] data_int[LATENCY];
 
-    assign data_out_1 = data_int[LATENCY];
-    assign data_out_2 = data_int[LATENCY];
+    assign data_out_1 = data_int[LATENCY-1];
+    assign data_out_2 = data_int[LATENCY-1];
 
     always_ff @(posedge clk) begin
         if(rst) begin

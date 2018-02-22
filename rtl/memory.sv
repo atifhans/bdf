@@ -14,6 +14,7 @@ module memory #(parameter WIDTH = 16,
                 parameter LSIZE = $clog2(SIZE))
 (
     input  logic                     clk,
+    input  logic                     rst,
     input  logic [WIDTH-1:0]         data_in,
     input  logic [LSIZE-1:0]         wr_addr,
     input  logic [LSIZE-1:0]         rd_addr,
@@ -26,9 +27,14 @@ module memory #(parameter WIDTH = 16,
     assign data_out = mem[rd_addr];
 
     always_ff @(posedge clk) begin
-        if(wr_en) begin
-            mem[wr_addr] <= data_in;
+        if(rst) begin
+            mem <= '{SIZE{'0}};
+        end
+        else begin
+            if(wr_en) begin
+                mem[wr_addr] <= data_in;
 
+            end
         end
     end
 
