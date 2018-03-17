@@ -12,8 +12,10 @@ import defines_pkg::*;
 
 module bdf_tb();
 
-    logic                  clk; 
-    logic                  rst;
+    logic                  clk1; 
+    logic                  rst1;
+    logic                  clk2; 
+    logic                  rst2;
     logic                  load_ctrl;
     logic                  start_ctrl;
     logic                  stop_ctrl;
@@ -22,8 +24,11 @@ module bdf_tb();
     logic [CODE_WIDTH-1:0] code_word;
     logic [CODE_WIDTH-1:0] code_words [0:CODE_LENGTH-1];
 
-    initial clk=0;
-    always #5 clk = ~clk;
+    initial clk1=0;
+    always #10 clk1 = ~clk1;
+
+    initial clk2=1;
+    always #5  clk2 = ~clk2;
     
     // instantiate dut
     bdf #(
@@ -32,8 +37,10 @@ module bdf_tb();
         .ITER_PERIOD   (ITERATION_BOUND),
         .DATA_WIDTH    (DATA_WIDTH))
     u_bdf (
-        .clk           (clk),
-        .rst           (rst),
+        .clk1          (clk1),
+        .rst1          (rst1),
+        .clk2          (clk2),
+        .rst2          (rst2),
         .ctrl_in       (code_word),
         .load_ctrl     (load_ctrl),
         .start_ctrl    (start_ctrl),
@@ -52,23 +59,25 @@ module bdf_tb();
         $readmemb(PROGFILENAME, code_words);
       
         // reset
-        @(posedge clk) rst = 1; 
-        @(posedge clk) rst = 0; 
+        @(posedge clk1) rst1 = 1; 
+        @(posedge clk1) rst1 = 0; 
+        @(posedge clk2) rst2 = 1; 
+        @(posedge clk2) rst2 = 0; 
 
         // load control data
         for(int i = 0; i < CODE_LENGTH; i++) begin
-            @(posedge clk) code_word = code_words[i];
+            @(posedge clk2) code_word = code_words[i];
             load_ctrl = 1;
         end
-        @(posedge clk) load_ctrl = 0;
+        @(posedge clk2) load_ctrl = 0;
       
         // run dut
         start_ctrl = 1;
-        repeat(1000) @(posedge clk);
+        repeat(1000) @(posedge clk2);
         start_ctrl = 0;
         stop_ctrl  = 1;
 
-        repeat(1000) @(posedge clk);
+        repeat(1000) @(posedge clk2);
 
         $finish;
     end

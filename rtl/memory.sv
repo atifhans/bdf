@@ -13,8 +13,10 @@ module memory #(parameter WIDTH = 16,
                 parameter SIZE  = 64,
                 parameter LSIZE = $clog2(SIZE))
 (
-    input  logic                     clk,
-    input  logic                     rst,
+    input  logic                     clk_wr,
+    input  logic                     rst_wr,
+    input  logic                     clk_rd,
+    input  logic                     rst_rd,
     input  logic [WIDTH-1:0]         data_in,
     input  logic [LSIZE-1:0]         wr_addr,
     input  logic [LSIZE-1:0]         rd_addr,
@@ -26,8 +28,8 @@ module memory #(parameter WIDTH = 16,
 
     assign data_out = mem[rd_addr];
 
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk_wr) begin
+        if(rst_wr) begin
             mem <= '{SIZE{'0}};
         end
         else begin

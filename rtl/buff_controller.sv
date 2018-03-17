@@ -13,8 +13,10 @@ module buff_controller #(parameter WIDTH = 16,
                          parameter SIZE  = 64,
                          parameter LSIZE = $clog2(SIZE))
 (
-    input  logic                     clk,
-    input  logic                     rst,
+    input  logic                     clk_wr,
+    input  logic                     rst_wr,
+    input  logic                     clk_rd,
+    input  logic                     rst_rd,
     input  logic                     wr_toggle,
     input  logic                     rd_toggle,
     input  logic [WIDTH-1:0]         data_in,
@@ -35,16 +37,18 @@ module buff_controller #(parameter WIDTH = 16,
         .WIDTH    ( WIDTH    ),
         .SIZE     ( SIZE     ))
     u_mem (
-        .clk      ( clk      ),
-        .rst      ( rst      ),
+        .clk_wr   ( clk_wr   ),
+        .rst_wr   ( rst_wr   ),
+        .clk_rd   ( clk_rd   ),
+        .rst_rd   ( rst_rd   ),
         .wr_addr  ( wr_cntr  ),
         .rd_addr  ( rd_cntr  ),
         .data_in  ( data_in  ),
         .data_out ( data_out ),
         .wr_en    ( wr_en    ));
 
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk_wr) begin
+        if(rst_wr) begin
             wr_en_int <= 'd0;
         end
         else begin
@@ -54,8 +58,8 @@ module buff_controller #(parameter WIDTH = 16,
         end
     end
 
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk_rd) begin
+        if(rst_rd) begin
             rd_en_int <= 'd0;
         end
         else begin
@@ -65,8 +69,8 @@ module buff_controller #(parameter WIDTH = 16,
         end
     end
 
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk_wr) begin
+        if(rst_wr) begin
             wr_cntr <= 'd0;
         end
         else begin
@@ -76,8 +80,8 @@ module buff_controller #(parameter WIDTH = 16,
         end
     end
 
-    always_ff @(posedge clk) begin
-        if(rst) begin
+    always_ff @(posedge clk_rd) begin
+        if(rst_rd) begin
             rd_cntr <= 'd0;
         end
         else begin
