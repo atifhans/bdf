@@ -30,8 +30,10 @@ module buff_controller #(parameter WIDTH = 16,
     logic              wr_en;
     logic              rd_en;
 
-    assign wr_en = (~wr_en_int & wr_toggle) | wr_en_int;
-    assign rd_en = (~rd_en_int & rd_toggle) | rd_en_int;
+    //assign wr_en = (~wr_en_int & wr_toggle) | (wr_en_int);
+    //assign rd_en = (~rd_en_int & rd_toggle) | (rd_en_int);
+    assign wr_en = wr_en_int;
+    assign rd_en = rd_en_int;
 
     memory #(
         .WIDTH    ( WIDTH    ),

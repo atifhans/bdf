@@ -27,9 +27,9 @@ module controller #(parameter CTRL_WIDTH = 24,  //No. of buffers*2
     logic [LSIZE-1:0]      rd_addr;
     logic                  wr_en;
     logic                  rd_en;
-    logic [CTRL_WIDTH-1:0] ctrl_word;
-    logic [CTRL_WIDTH-1:0] ctrl_word_dly;
-    logic [CTRL_WIDTH-1:0] ctrl_word_exp;
+    logic [0:CTRL_WIDTH-1] ctrl_word;
+    logic [0:CTRL_WIDTH-1] ctrl_word_dly;
+    logic [0:CTRL_WIDTH-1] ctrl_word_exp;
     logic                  ctrl_active;
 
     assign wr_en = load_ctrl;
@@ -40,30 +40,38 @@ module controller #(parameter CTRL_WIDTH = 24,  //No. of buffers*2
             ctrl_word_exp[i] = ctrl_word[i] | ctrl_word_dly[i];
         end
         
-        buff_wr_toggle[0]  = ctrl_word_exp[0];
-        buff_rd_toggle[0]  = ctrl_word_exp[0];
-        buff_wr_toggle[1]  = ctrl_word_exp[1];
-        buff_rd_toggle[1]  = ctrl_word[1];
-        buff_wr_toggle[2]  = ctrl_word_exp[2];
-        buff_rd_toggle[2]  = ctrl_word_exp[2];
-        buff_wr_toggle[3]  = ctrl_word_exp[3];
-        buff_rd_toggle[3]  = ctrl_word[3];
-        buff_wr_toggle[4]  = ctrl_word[4];
-        buff_rd_toggle[4]  = ctrl_word_exp[4];
-        buff_wr_toggle[5]  = ctrl_word_exp[5];
-        buff_rd_toggle[5]  = ctrl_word_exp[5];
-        buff_wr_toggle[6]  = ctrl_word_exp[6];
-        buff_rd_toggle[6]  = ctrl_word[6];
-        buff_wr_toggle[7]  = ctrl_word[7];
-        buff_rd_toggle[7]  = ctrl_word[7];
-        buff_wr_toggle[8]  = ctrl_word[8];
-        buff_rd_toggle[8]  = ctrl_word_exp[8];
-        buff_wr_toggle[9]  = ctrl_word[9];
-        buff_rd_toggle[9]  = ctrl_word_exp[9];
-        buff_wr_toggle[10] = ctrl_word_exp[10];
-        buff_rd_toggle[10] = ctrl_word_exp[10];
-        buff_wr_toggle[11] = ctrl_word_exp[11];
-        buff_rd_toggle[11] = ctrl_word[11];
+        if(start_ctrl) begin
+            buff_wr_toggle[0]  = ctrl_word_exp[0];
+            buff_rd_toggle[0]  = ctrl_word_exp[1];
+            buff_wr_toggle[1]  = ctrl_word_exp[2];
+            buff_rd_toggle[1]  = ctrl_word[3];
+            buff_wr_toggle[2]  = ctrl_word_exp[4];
+            buff_rd_toggle[2]  = ctrl_word_exp[5];
+            buff_wr_toggle[3]  = ctrl_word_exp[6];
+            buff_rd_toggle[3]  = ctrl_word[7];
+            buff_wr_toggle[4]  = ctrl_word[8];
+            buff_rd_toggle[4]  = ctrl_word_exp[9];
+            buff_wr_toggle[5]  = ctrl_word_exp[10];
+            buff_rd_toggle[5]  = ctrl_word_exp[11];
+            buff_wr_toggle[6]  = ctrl_word_exp[12];
+            buff_rd_toggle[6]  = ctrl_word[13];
+            buff_wr_toggle[7]  = ctrl_word[14];
+            buff_rd_toggle[7]  = ctrl_word[15];
+            buff_wr_toggle[8]  = ctrl_word[16];
+            buff_rd_toggle[8]  = ctrl_word_exp[17];
+            buff_wr_toggle[9]  = ctrl_word[18];
+            buff_rd_toggle[9]  = ctrl_word_exp[19];
+            buff_wr_toggle[10] = ctrl_word_exp[20];
+            buff_rd_toggle[10] = ctrl_word_exp[21];
+            buff_wr_toggle[11] = ctrl_word_exp[22];
+            buff_rd_toggle[11] = ctrl_word[23];
+        end
+        else begin
+            for(int i = 0; i < CTRL_WIDTH/2; i++) begin
+                buff_wr_toggle[i] = 1'b0;
+                buff_rd_toggle[i] = 1'b0;
+            end
+        end
         
     end
 

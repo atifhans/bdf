@@ -9,7 +9,7 @@
 package defines_pkg;
 
     parameter PROGFILENAME    = "prog_file1.txt";
-    parameter ITERATION_BOUND = 64;
+    parameter ITERATION_BOUND = 128;
     parameter NUM_BUFFERS     = 12;
     parameter DATA_WIDTH      = 16;
     parameter CODE_LENGTH     = ITERATION_BOUND;
