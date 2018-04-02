@@ -18,19 +18,22 @@ float get_power(vector<float> freqs);
 int main(int argc, char* argv[]) 
 {
 
-    if(argc != 2) {
+    if(argc != 3) {
         std::cout << "Invalid number of paramters!" << std::endl;
         exit(1);
     }
 
     float req_iter = atof(argv[1]);
-    float epsilon = 1.0;
+    int log_en = atoi(argv[2]);
+    float epsilon = 0.1;
     float step_size = 0.01;
     int iter_no = 0;
 
     std::ofstream log_file;
-    string fname = "run_" + std::to_string(req_iter) + ".log";
-    log_file.open(fname);
+    if(log_en) {
+        string fname = "run_" + std::to_string(req_iter) + ".log";
+        log_file.open(fname);
+    }
 
     vector<float> freqs = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
 
@@ -38,15 +41,30 @@ int main(int argc, char* argv[])
     float power = get_power(freqs);
 
     while((iterp > req_iter + epsilon) || (iterp < req_iter - epsilon)) {
-        log_file << "Current iterp: " << iterp << ", Power: " << power << std::endl;
-        log_file << "Required iterp: " << req_iter << std::endl;
-        for(int i = 0; i < 7; i++) log_file << "F" << i << ": " << freqs[i] << ", ";
-        log_file << std::endl;
+        if(log_en) {
+            log_file << "Current iterp: " << iterp << ", Current Power: " << power << std::endl;
+            log_file << "Required iterp: " << req_iter << ", Step Size: " << step_size << std::endl;
+            for(int i = 0; i < 7; i++) log_file << "F" << i << ": " << freqs[i] << ", ";
+            log_file << std::endl;
+        }
 
-        //if(iter_no == 5000) break;
+        int idx = rand() % 7;
+
+        if(iterp < req_iter) {
+            freqs[idx] -= step_size;
+        }
+        else {
+            freqs[idx] += step_size;
+        }
+
+        iterp = get_iterp(freqs);
+        power = get_power(freqs);
+
         iter_no++;
-        float diff = -1;
-        float idx;
+        /*
+        float dip = -1;
+        float dpw;
+        float idx = 0;
         int skip = 0;
         for(int i = 0; i < 7; i++) {
             freqs[i] = (iterp > req_iter) ? freqs[i] + step_size : freqs[i] - step_size;
@@ -55,27 +73,40 @@ int main(int argc, char* argv[])
                 skip++;
                 continue;
             }
-            else if(freqs[i] >= 1000.0) {
+            else if(freqs[i] >= 10.0) {
                 freqs[i] -= step_size;
                 skip++;
                 continue;
             }
             float peek_ip = get_iterp(freqs);
-            if(fabs(peek_ip - iterp) > diff) {
-                diff = fabs(peek_ip - iterp);
+            float peek_pw = get_power(freqs);
+            float diff_ip = fabs(peek_ip - iterp);
+            float diff_pw = fabs(peek_pw - power);
+            if(i == 0) dpw = diff_pw;
+            if(diff_ip > dip && diff_pw <= dpw && diff_ip < fabs(req_iter - iterp)) {
+                dpw = diff_pw;
+                dip = diff_ip;
                 idx = i;
             }
-            log_file << "Peek IP: " << peek_ip << ", diff: " << diff << ", idx: " << idx << std::endl;
+            if(log_en) {
+                log_file << "Peek IP: " << peek_ip << ", Peek PW: " << peek_pw << ", DIP: " << dip  << ", DPW: " << dpw << ", Idx: " << idx << std::endl;
+            }
             freqs[i] = (iterp > req_iter) ? freqs[i] - step_size : freqs[i] + step_size;
         }
-        if(skip == 7) break;
+        if(skip == 7 || freqs[idx] >= 10.0) break;
+        if(log_en) log_file << std::endl;
         freqs[idx] = (iterp > req_iter) ? freqs[idx] + step_size : freqs[idx] - step_size;
         iterp = get_iterp(freqs);
         power = get_power(freqs);
+        */
     }
 
-    std::cout << "Current iterp: " << iterp << ", Power: " << power << std::endl;
-    for(int i = 0; i < 7; i++) std::cout << "F" << i << ": " << freqs[i] << ", ";
+    if(log_en) {
+        log_file.close();
+    }
+
+    std::cout << "Current iterp: " << iterp << "us, Power: " << power << "uW" << std::endl;
+    for(int i = 0; i < 7; i++) std::cout << "F" << i << ": " << freqs[i] << "Mhz, ";
     std::cout << std::endl;
 
     return 0;
